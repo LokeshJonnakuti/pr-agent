@@ -51,7 +51,7 @@ class BitbucketServerProvider(GitProvider):
         try:
             url = (f"{self.bitbucket_server_url}/projects/{self.workspace_slug}/repos/{self.repo_slug}/src/"
                    f"{self.pr.destination_branch}/.pr_agent.toml")
-            response = requests.request("GET", url, headers=self.headers)
+            response = requests.request("GET", url, headers=self.headers, timeout=60)
             if response.status_code == 404:  # not found
                 return ""
             contents = response.text.encode('utf-8')
@@ -241,7 +241,7 @@ class BitbucketServerProvider(GitProvider):
             }
         }
 
-        response = requests.post(url=self._get_pr_comments_url(), json=payload, headers=self.headers)
+        response = requests.post(url=self._get_pr_comments_url(), json=payload, headers=self.headers, timeout=60)
         return response
 
     def generate_link_to_relevant_line_number(self, suggestion) -> str:
@@ -339,7 +339,7 @@ class BitbucketServerProvider(GitProvider):
             "title": pr_title
         })
 
-        response = requests.put(url=self.bitbucket_pull_request_api_url, headers=self.headers, data=payload)
+        response = requests.put(url=self.bitbucket_pull_request_api_url, headers=self.headers, data=payload, timeout=60)
         return response
 
     # bitbucket does not support labels
